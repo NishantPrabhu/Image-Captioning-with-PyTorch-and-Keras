@@ -252,6 +252,10 @@ tokenizer, vocab_size = tokenize_sentences(all_captions)
 # How many words do we have?
 print("Size of the vocabulary:", vocab_size)
 ```
+```
+>>> Size of the vocabulary: 8372
+```
+
 # Model definition
 Here comes the heart of this tutorial. But before that, for those who are new, below is a short primer on recurrent neural networks. Also, we'll discuss the correct representation of words in this section. If you know what I'm talking about, skip to **Model Structure** below.
 

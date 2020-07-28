@@ -39,7 +39,7 @@ from matplotlib import pyplot as plt
 from tqdm.notebook import tqdm
 ```
 # Image feature generation
-The first thing we do is create rich features from images, which should be representative of its contents. It is best to use pre-trained deep CNNs for this task, since they are (usually) trained on very large datasets like ImageNet and can generate excellent features. I am going to use **VGG-16 by PyTorch**, which is VGGNet with 16 layers. The model's general architecture looks like the image below.
+The first thing we do is create rich features from images, which should be representative of its contents. It is best to use pre-trained deep CNNs for this task, sihttps://i.imgur.com/uYMAQXo.pngnce they are (usually) trained on very large datasets like ImageNet and can generate excellent features. I am going to use **VGG-16 by PyTorch**, which is VGGNet with 16 layers. The model's general architecture looks like the image below.
 
 <p align="center">
     <img src="https://i.imgur.com/ReXf1XA.png" alt="VGGNet architecture" width="700" />
@@ -861,11 +861,11 @@ Let's now look at some examples and see how good or bad it really is. They're no
 </p>
 
 <p align="center">
-    <img src="https://i.imgur.com/h4YXGCh.png" alt="example 3" width="700">
+    <img src="https://i.imgur.com/h4YXGCh.png" alt="example 3" width="500">
 </p>
 
 <p align="center">
-    <img src="https://i.imgur.com/8btPAWe.png" alt="example 4" width="700">
+    <img src="https://i.imgur.com/8btPAWe.png" alt="example 4" width="500">
 </p>
 
 # Endnote

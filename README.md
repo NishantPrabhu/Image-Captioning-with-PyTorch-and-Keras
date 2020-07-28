@@ -298,7 +298,7 @@ Since the allotment of integers to words is arbitrary (first-come-first-serve ac
 1. Our vocabulary is 8372 words strong. Each word will be a 8372 dimensional, extremely sparse vector. If you use these tensors made of these with float data type, that would be an astronomical waste of memory (considering you even get to store that much). 
 2. The distance issue is now different. Earlier, we had arbitrary distances between words. Now, each word is equidistant from every other word! That's equally unacceptable. Why? consider the words (NLP aficionado will cringe): king, queen, vase, Sunday. Don't you think "king" and "queen" should have less distance between them than with the other words? This is extremely important to understand relations between words from a corpus.
 
-What else can we do? Well, how about we leave it to the network? We'll give it 8370 vectors which are randomly initialized (with smaller dimension, say a few hundred features) and let it learn the required spatial relations between words by modifying these vectors as it learns. Vectors generated through this process are called **Word Embeddings**. Enter **GloVe**!
+What else can we do? Well, how about we leave it to the network? We'll give it 8372 vectors which are randomly initialized (with smaller dimension, say a few hundred features) and let it learn the required spatial relations between words by modifying these vectors as it learns. Vectors generated through this process are called **Word Embeddings**. Enter **GloVe**!
 
 <p align="center">
     <img src="https://i.imgur.com/rMWxiNp.png" alt="GloVe exampled, from Stanford NLP github" width="800">

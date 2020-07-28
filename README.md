@@ -43,7 +43,7 @@ from tqdm.notebook import tqdm
 The first thing we do is create rich features from images, which should be representative of its contents. It is best to use pre-trained deep CNNs for this task, since they are (usually) trained on very large datasets like ImageNet and can generate excellent features. I am going to use **VGG-16 by PyTorch**, which is VGGNet with 16 layers. The model's general architecture looks like the image below.
 
 <p align="center">
-    <img src="https://i.imgur.com/ReXf1XA.png" alt="VGGNet architecture" width="500" />
+    <img src="https://i.imgur.com/ReXf1XA.png" alt="VGGNet architecture" width="700" />
 </p>
 
 The final layer in this model is a fully connected layer mapping to 1000 units. This is kept for classification purposes (the ImageNet dataset has 1000 classes) and is not necessary for us. We'll retain only up to the penultimate layer of the model, which will give us a feature vector of 4096 dimensions for every image.
@@ -175,12 +175,16 @@ A simple solution to this would be to generate a vocabulary of all the words we 
 ### Preprocessing
 Some elements of caption sentences do not carry any meaning. Examples include uppercase alphabets, punctuation and numbers (at least for our purposes). First we will clean each sentence of these entities. Then, we will add two special tokens at the start and end of each sentence, to indicate the beggining and ending of the sentence (`startseq` and `endseq` respectively). These help the model know when to start and stop predicting. Once that is done, we tokenize all the lines using the `Tokenizer` class from `keras.preprocessing.text` submodule.
 
-<img src="../images/text_processing.png" alt="Text processing" width="500">
+<p align="center">
+    <img src="https://i.imgur.com/0IYUSui.png" alt="Text processing" width="600">
+</p>
 
 ### Padding
 Neural networks expect inputs to be of fixed size when provided in a batch. Since captions might be of different lengths, we must pad each sentence at the end with special tokens (usually zeros) so that all inputs have the same shape. This process is known as **padding**. We will use the `pad_sequences` function from `keras.preprocessing.sequence` to perform this operation.
 
-<img src="../images/padding_example.png" alt="Padding example" width="500">
+<p align="center">
+    <img src="https://i.imgur.com/JlriGHp.png" alt="Padding example" width="600">
+</p>
 
 ```python
 def preprocess_line(line):
@@ -243,7 +247,9 @@ Simple fully connected networks assume that the examples provided to them are in
 
 An RNN is capable of retaining some memory of the examples it has seen earlier by feeding back the activations of its hidden layer to itself (left image). We can **unroll the RNN in time** as shown in the image on the right. Each input layer + hidden layer + output in the right image is the **same network** at **different times**. Also note that the outputs taken from the RNN layer are usually its hidden layer activations i.e. $y_{0}=h_{0}$, $y_{1}=h_{1}$ and so on.
 
-<img src="../images/rnn_example.png" alt="RNN diagram" width="800">
+<p align="center">
+    <img src="https://i.imgur.com/KghLSa8.png" alt="RNN diagram" width="800">
+</p>
 
 The network itself behaves as a fully connected network, with the output given by the expression below. You can see that it incorporates the effect of the current input as well as the previous hidden layer activations, as a weighted sum.
 
@@ -254,14 +260,18 @@ $$
 ## Gradient issues and LSTMs
 RNNs suffer from two issues, namely **Vanishing** and **Exploding Gradients**. This greatly affects their performance, making them rather unpopular in the practical space. Schmidhuber et. al. came up with a novel solution to this with their **Long Short Term Memory (LSTM)** cells, as a replacement for the simple RNN cell. It's structure is shown below.
 
-<img src="../images/lstm.png" alt="LSTM diagram" width="300">
+<p align="center">
+    <img src="https://i.imgur.com/v5AiE1U.png" alt="LSTM diagram" width="300">
+</p>
 
 We will not go into the details of what this is and how it works (you can read more about it in [Christopher Olah's blog](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)). All we need to know is that these cells have the capability to selectively read, forget and output information from inputs and past hidden states. They effectively solve the vanishing gradients problem; the exploding gradients - not so much. Anyway, they are better at modelling long term dependencies than RNNs.
 
 ## I/O specifications for recurrent layers
 I think it's important that we know the way a layer of RNNs or LSTMs accepts and outputs tensors. The shape of input tensors to these layers are of the form **(batch size, sequence length, features)**. They output tensors in the very same format, only the number of features in the output will be equal to the number of hidden units of the recurrent layer.
 
-<img src="../images/lstm_io.png" alt="LSTM I/O" width="800">
+<p align="center">
+    <img src="https://i.imgur.com/zWaVCoL.png" alt="LSTM I/O" width="800">
+</p>
 
 **Note for PyTorch**: PyTorch has the default convention (sequence length, batch size, features) for its recurrent layers. Passing the argument `batch_first = True` brings it to the format above.
 
@@ -277,14 +287,18 @@ Since the allotment of integers to words is arbitrary (first-come-first-serve ac
 
 What else can we do? Well, how about we leave it to the network? We'll give it 8370 vectors which are randomly initialized (with smaller dimension, say a few hundred features) and let it learn the required spatial relations between words by modifying these vectors as it learns. Vectors generated through this process are called **Word Embeddings**. Enter **GloVe**!
 
-<img src="../images/glove.png" alt="GloVe exampled, from Stanford NLP github" width="800">
+<p align="center">
+    <img src="https://i.imgur.com/rMWxiNp.png" alt="GloVe exampled, from Stanford NLP github" width="800">
+</p>
 
 GloVe stands for **Global Vectors**. Consider these vectors as a lookup table for our words. We go to this "learned" table, ask for the vector corresponsding to a word, and replace the word's integer token with this vector. GloVe is an excellent group of pre-trained vectors trained on very large corpora such as **Common Crawl** and **Wikipedia**, These vectors capture co-occurences of words really well, and we'll be using the same here. You can download pre-trained GloVe vectors [here](https://github.com/stanfordnlp/GloVe), generously made open-source by Stanford NLP group (for this tutorial, we are using the 6B vocab set (822 MB), trained on Wikipedia 2014). 
 
 ## Model structure
 Finally! Here's what our model will look like (overall).
 
-<img src="../images/model_architecture.png" alt="Model architecture" width="900">
+<p align="center">
+    <img src="https://i.imgur.com/ho8HFBw.png" alt="Model architecture" width="900">
+</p>
 
 The inputs to the model are the preprocessed image (224, 244, 3) and the integer tokens of the captions. The image's features are extracted (we have already done this) and reduced to 256 dimensions using a Linear layer with ReLU activation. 256 is an arbitrary choice, feel free to try other dimensions. We will use **Categorical Crossentropy** loss (Log softmax + Nonlinear logloss in PyTorch) for updating the parameters. Also, we'll use an Adam optimizer with constant learning rate. 
 
@@ -297,7 +311,9 @@ Providing the caption tokens, however, is not that straightforward. Imagine how 
 
 We will follow the same pattern for our network. So, our caption inputs will look like this.
 
-<img src="../images/caption_input_format.png" alt="Caption input format" width="300">
+<p align="center">
+    <img src="https://i.imgur.com/Hh9R84z.png" alt="Caption input format" width="300">
+</p>
 
 ## Data Generator
 I know this has gone too long, but here's one last thing before we start coding. Typically the datasets used for these will have very large sizes. Plus, for computing crossentropy, your predictions and targets will be one hot vectors of size 8372. If you try to pass the entire dataset in this form to your machine, it might run out of memory soon (and hang). To prevent this, we use a **data generator**.
@@ -363,8 +379,106 @@ def data_generator(img_features, captions_dict, batch_size):
                         # Reset counter
                         count = 0
 ```
+Let's test a sample of this generator and see the kind of data it outputs.
 
-Great! Let's now start building our model. We will create a Network class that will inherit methods from `torch.nn.Module`. Loosely, this means all the updates, parameter initializations, backpropagation, etc. will be taken care of by `torch` itself. All we have to do is define what layers it will have, and how tensors will flow through them. 
+```python
+# Let's see if it's behaving how we want it to
+
+gen = data_generator(train_features, train_captions, 32)
+
+# Generate a batch by calling next() on the generator
+img_in, caption_in, caption_trg = next(gen)
+
+print("Image features:", img_in.shape)
+print("Caption input:", caption_in.shape)
+print("Caption target:", caption_trg.shape)
+```
+```
+>>> Image features: torch.Size([32, 4096])
+    Caption input: torch.Size([32, 15])
+    Caption target: torch.Size([32])
+```
+Also, have a look at the contents of `caption_in` and `caption_trg`.
+
+```python
+print(caption_in)
+```
+```
+>>> tensor([[   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+            0,    0,    2],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+            0,    2,   42],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+            2,   42,    7],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    2,
+           42,    7,  253],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    2,   42,
+            7,  253,   10],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    2,   42,    7,
+          253,   10,  104],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    2,   42,    7,  253,
+           10,  104,   35],
+        [   0,    0,    0,    0,    0,    0,    0,    2,   42,    7,  253,   10,
+          104,   35,  799],
+        [   0,    0,    0,    0,    0,    0,    2,   42,    7,  253,   10,  104,
+           35,  799,   10],
+        [   0,    0,    0,    0,    0,    2,   42,    7,  253,   10,  104,   35,
+          799,   10,  234],
+        [   0,    0,    0,    0,    2,   42,    7,  253,   10,  104,   35,  799,
+           10,  234,  750],
+        [   0,    0,    0,    2,   42,    7,  253,   10,  104,   35,  799,   10,
+          234,  750, 1952],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+            0,    0,    2],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+            0,    2,   19],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+            2,   19,    4],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    2,
+           19,    4,   30],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    2,   19,
+            4,   30, 1787],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    2,   19,    4,
+           30, 1787,  817],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    2,   19,    4,   30,
+         1787,  817, 1006],
+        [   0,    0,    0,    0,    0,    0,    0,    2,   19,    4,   30, 1787,
+          817, 1006,    6],
+        [   0,    0,    0,    0,    0,    0,    2,   19,    4,   30, 1787,  817,
+         1006,    6,  585],
+        [   0,    0,    0,    0,    0,    2,   19,    4,   30, 1787,  817, 1006,
+            6,  585,   10],
+        [   0,    0,    0,    0,    2,   19,    4,   30, 1787,  817, 1006,    6,
+          585,   10,  750],
+        [   0,    0,    0,    2,   19,    4,   30, 1787,  817, 1006,    6,  585,
+           10,  750, 3199],
+        [   0,    0,    2,   19,    4,   30, 1787,  817, 1006,    6,  585,   10,
+          750, 3199,    4],
+        [   0,    2,   19,    4,   30, 1787,  817, 1006,    6,  585,   10,  750,
+         3199,    4,    5],
+        [   2,   19,    4,   30, 1787,  817, 1006,    6,  585,   10,  750, 3199,
+            4,    5,  102],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+            0,    0,    2],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+            0,    2,   40],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+            2,   40,   19],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    2,
+           40,   19,  227],
+        [   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    2,   40,
+           19,  227,  817]])
+```
+```python
+print(caption_trg)
+```
+```
+>>> tensor([  42,    7,  253,   10,  104,   35,  799,   10,  234,  750, 1952,    3,
+          19,    4,   30, 1787,  817, 1006,    6,  585,   10,  750, 3199,    4,
+           5,  102,    3,   40,   19,  227,  817,  680])
+```
+
+So it does provide us data in the staircase pre-padded format that we want. Perfect! Let's now start building our model. We will create a Network class that will inherit methods from `torch.nn.Module`. Loosely, this means all the updates, parameter initializations, backpropagation, etc. will be taken care of by `torch` itself. All we have to do is define what layers it will have, and how tensors will flow through them. 
 
 ```python
 # Model definition
@@ -428,7 +542,13 @@ Before we test our model out, let's process the GloVe embeddings so we can initi
 
 with open("../glove/glove.6B.200d.txt", "r") as f:
     glove = f.read().split("\n")
+    
+print(glove[0])
 ```
+```
+>>> 'the -0.071549 0.093459 0.023738 -0.090339 0.056123 0.32547 -0.39796 -0.092139 0.061181 -0.1895 0.13061 0.14349 0.011479 0.38158 0.5403 -0.14088 0.24315 0.23036 -0.55339 0.048154 0.45662 3.2338 0.020199 0.049019 -0.014132 0.076017 -0.11527 0.2006 -0.077657 0.24328 0.16368 -0.34118 -0.06607 0.10152 0.038232 -0.17668 -0.88153 -0.33895 -0.035481 -0.55095 -0.016899 -0.43982 0.039004 0.40447 -0.2588 0.64594 0.26641 0.28009 -0.024625 0.63302 -0.317 0.10271 0.30886 0.097792 -0.38227 0.086552 0.047075 0.23511 -0.32127 -0.28538 0.1667 -0.0049707 -0.62714 -0.24904 0.29713 0.14379 -0.12325 -0.058178 -0.001029 -0.082126 0.36935 -0.00058442 0.34286 0.28426 -0.068599 0.65747 -0.029087 0.16184 0.073672 -0.30343 0.095733 -0.5286 -0.22898 0.064079 0.015218 0.34921 -0.4396 -0.43983 0.77515 -0.87767 -0.087504 0.39598 0.62362 -0.26211 -0.30539 -0.022964 0.30567 0.06766 0.15383 -0.11211 -0.09154 0.082562 0.16897 -0.032952 -0.28775 -0.2232 -0.090426 1.2407 -0.18244 -0.0075219 -0.041388 -0.011083 0.078186 0.38511 0.23334 0.14414 -0.0009107 -0.26388 -0.20481 0.10099 0.14076 0.28834 -0.045429 0.37247 0.13645 -0.67457 0.22786 0.12599 0.029091 0.030428 -0.13028 0.19408 0.49014 -0.39121 -0.075952 0.074731 0.18902 -0.16922 -0.26019 -0.039771 -0.24153 0.10875 0.30434 0.036009 1.4264 0.12759 -0.073811 -0.20418 0.0080016 0.15381 0.20223 0.28274 0.096206 -0.33634 0.50983 0.32625 -0.26535 0.374 -0.30388 -0.40033 -0.04291 -0.067897 -0.29332 0.10978 -0.045365 0.23222 -0.31134 -0.28983 -0.66687 0.53097 0.19461 0.3667 0.26185 -0.65187 0.10266 0.11363 -0.12953 -0.68246 -0.18751 0.1476 1.0765 -0.22908 -0.0093435 -0.20651 -0.35225 -0.2672 -0.0034307 0.25906 0.21759 0.66158 0.1218 0.19957 -0.20303 0.34474 -0.24328 0.13139 -0.0088767 0.33617 0.030591 0.25577'
+```
+
 Each line is a string with the first element as the word and the remaining as its 200 dimensional embedding values. We will split this string on space, separate the word from the embeddings and convert the embeddings to float values. Let's store this in a dictionary so it feels more like a lookup table. There are issues with some of the strings in it, so we add these in a `try except` block. Anytime an error occurs, the loop will move to the next iteration.
 
 ```python

@@ -850,9 +850,23 @@ The model performs surprisingly well on the training dataset, and decent on the 
 3. The model needs to train more. This would depend on heuristics, however.
 
 ## Examples
-Let's now look at some examples and see how good or bad it really is. First, let's see some **good predictions** from the test dataset.
+Let's now look at some examples and see how good or bad it really is. They're not perfect; considering how simple the model is, I think they're decent.
 
-# Show some examples here, when finalized
+<p align="center">
+    <img src="https://i.imgur.com/uYMAQXo.png" alt="example 1" width="700">
+</p>
+
+<p align="center">
+    <img src="https://i.imgur.com/hQmYYfx.png" alt="example 2" width="700">
+</p>
+
+<p align="center">
+    <img src="https://i.imgur.com/h4YXGCh.png" alt="example 3" width="700">
+</p>
+
+<p align="center">
+    <img src="https://i.imgur.com/8btPAWe.png" alt="example 4" width="700">
+</p>
 
 # Endnote
 Here you are! A decent image caption generator in no time (excluding the training time). The model that I proposed here is very simplistic. There's definitely much better models out there which can do the job much better than this one. However, this was meant to be a primer and fun project for people venturing into natural language processing and computer vision. 

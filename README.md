@@ -262,17 +262,13 @@ Here comes the heart of this tutorial. But before that, for those who are new, b
 ## Recurrent neural networks
 Simple fully connected networks assume that the examples provided to them are independent of each other. However, when we are dealing with sequences, this assumption falls apart. So it is not wise to use Dense layers to model such dependencies between consecutive sequence elements. This is where recurrent neural networks (RNNs) come to the rescue!
 
-An RNN is capable of retaining some memory of the examples it has seen earlier by feeding back the activations of its hidden layer to itself (left image). We can **unroll the RNN in time** as shown in the image on the right. Each input layer + hidden layer + output in the right image is the **same network** at **different times**. Also note that the outputs taken from the RNN layer are usually its hidden layer activations i.e. $y_{0}=h_{0}$, $y_{1}=h_{1}$ and so on.
+An RNN is capable of retaining some memory of the examples it has seen earlier by feeding back the activations of its hidden layer to itself (left image). We can **unroll the RNN in time** as shown in the image on the right. Each input layer + hidden layer + output in the right image is the **same network** at **different times**. Also note that the outputs taken from the RNN layer are usually its hidden layer activations.
 
 <p align="center">
     <img src="https://i.imgur.com/KghLSa8.png" alt="RNN diagram" width="800">
 </p>
 
-The network itself behaves as a fully connected network, with the output given by the expression below. You can see that it incorporates the effect of the current input as well as the previous hidden layer activations, as a weighted sum.
-
-<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
-    y_{t} = W_{O} \cdot \left(W_{I}x_{t} + W_{H}h_{t-1} \right)
-</script>
+The network itself behaves as a fully connected network, with the output given by the expression below. It incorporates the effect of the current input as well as the previous hidden layer activations, as a weighted sum.
 
 ## Gradient issues and LSTMs
 RNNs suffer from two issues, namely **Vanishing** and **Exploding Gradients**. This greatly affects their performance, making them rather unpopular in the practical space. Schmidhuber et. al. came up with a novel solution to this with their **Long Short Term Memory (LSTM)** cells, as a replacement for the simple RNN cell. It's structure is shown below.

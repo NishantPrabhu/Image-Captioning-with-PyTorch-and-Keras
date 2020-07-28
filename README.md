@@ -1,4 +1,3 @@
-# Image captioning model with PyTorch (and Keras)
 **Nishant Prabhu, 25 July 2020**
 
 In this tutorial, we will learn to build a simple image captioning system - a model that can take in an image and generate sentence to describe it in the best possible way. This is a slightly advanced tutorial and requires that you understand some basics of natural language processing, the working and usage of pre-trained CNNs and recurrent network units like LSTMs. Don't worry if you don't; I'll provide brief explanations and links for further reading wherever I can. 

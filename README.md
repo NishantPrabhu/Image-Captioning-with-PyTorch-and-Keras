@@ -42,8 +42,9 @@ from tqdm.notebook import tqdm
 # Image feature generation
 The first thing we do is create rich features from images, which should be representative of its contents. It is best to use pre-trained deep CNNs for this task, since they are (usually) trained on very large datasets like ImageNet and can generate excellent features. I am going to use **VGG-16 by PyTorch**, which is VGGNet with 16 layers. The model's general architecture looks like the image below.
 
-<img src="https://i.imgur.com/ReXf1XA.png" alt="VGGNet architecture" align="center" width="500" />
-
+<p align="center">
+    <img src="https://i.imgur.com/ReXf1XA.png" alt="VGGNet architecture" width="500" />
+</p>
 
 The final layer in this model is a fully connected layer mapping to 1000 units. This is kept for classification purposes (the ImageNet dataset has 1000 classes) and is not necessary for us. We'll retain only up to the penultimate layer of the model, which will give us a feature vector of 4096 dimensions for every image.
 

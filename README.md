@@ -101,6 +101,19 @@ with open("../data/captions.txt", "r") as f:
 # Display the first 10 captions
 captions[:10]
 ```
+```
+>>> ['1000268201_693b08cb0e.jpg#0\tA child in a pink dress is climbing up a set of stairs in an entry way .',
+ '1000268201_693b08cb0e.jpg#1\tA girl going into a wooden building .',
+ '1000268201_693b08cb0e.jpg#2\tA little girl climbing into a wooden playhouse .',
+ '1000268201_693b08cb0e.jpg#3\tA little girl climbing the stairs to her playhouse .',
+ '1000268201_693b08cb0e.jpg#4\tA little girl in a pink dress going into a wooden cabin .',
+ '1001773457_577c3a7d70.jpg#0\tA black dog and a spotted dog are fighting',
+ '1001773457_577c3a7d70.jpg#1\tA black dog and a tri-colored dog playing with each other on the road .',
+ '1001773457_577c3a7d70.jpg#2\tA black dog and a white dog with brown spots are staring at each other in the street .',
+ '1001773457_577c3a7d70.jpg#3\tTwo dogs of different breeds looking at each other on the road .',
+ '1001773457_577c3a7d70.jpg#4\tTwo dogs on pavement moving toward each other .']
+```
+
 You can see that every image is associated with 5 captions (every image, because I checked). The first thing we might have to do is to organize this information in a more easier-to-work-with manner. A lookup table where the keys are the filename and a list of 5 captions associated with that file as its value should do. The Python equivalent of a lookup table is a dictionary, so we'll create a dictionary. To separate the keys from the sentences, we split each sentence on the tab delimiter "\t". Plus, we'll also remove the number tags (#0, #1, etc.) from the filenames.
 
 ```python

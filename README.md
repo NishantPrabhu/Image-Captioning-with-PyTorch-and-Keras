@@ -270,9 +270,9 @@ An RNN is capable of retaining some memory of the examples it has seen earlier b
 
 The network itself behaves as a fully connected network, with the output given by the expression below. You can see that it incorporates the effect of the current input as well as the previous hidden layer activations, as a weighted sum.
 
-$$
-y_{t} = W_{O} \cdot \left(W_{I}x_{t} + W_{H}h_{t-1} \right)
-$$
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    y_{t} = W_{O} \cdot \left(W_{I}x_{t} + W_{H}h_{t-1} \right)
+</script>
 
 ## Gradient issues and LSTMs
 RNNs suffer from two issues, namely **Vanishing** and **Exploding Gradients**. This greatly affects their performance, making them rather unpopular in the practical space. Schmidhuber et. al. came up with a novel solution to this with their **Long Short Term Memory (LSTM)** cells, as a replacement for the simple RNN cell. It's structure is shown below.
